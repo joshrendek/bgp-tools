@@ -10,6 +10,8 @@ module BgpTools
       set_country_of_origin
       set_prefix_list
       set_as_path_length
+      set_ips_originated
+      set_bgp_peer_list
     end
 
     private
@@ -19,9 +21,22 @@ module BgpTools
       .map(&:text).map(&:strip)[0].split(':')[1].strip.to_f
     end
 
+    def set_bgp_peer_list
+      self.bgp_peer_list = doc.xpath("//*[@id=\"table_peers4\"]/tbody/tr").map do |row|
+        vals = row.css('td').map(&:text)
+        ipv6 = vals[2] == "X" ? true : false
+        BGPPeer.new(vals[3], vals[1], ipv6, vals[0].to_i)
+      end
+    end
+
 
     def set_country_of_origin
       self.country_of_origin = doc.xpath("//*[@id=\"asinfo\"]/div[2]/div[2]").map(&:text)[0].strip
+    end
+
+    def set_ips_originated
+      self.ips_originated = doc.xpath("//*[@id=\"asinfo\"]/div[2]/div[8]").first.children
+      .map(&:text).map(&:strip)[0].split(':')[1].strip.gsub(',', '').to_i
     end
 
     def set_prefix_list
