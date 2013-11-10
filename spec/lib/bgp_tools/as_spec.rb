@@ -26,4 +26,8 @@ describe BgpTools::AS do
     haystack.first.name == needle
   end
 
+  it "should contain 66.28.252.1" do
+    subject.contains?("66.28.252.1").should == true
+  end
+
 end

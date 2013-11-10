@@ -14,6 +14,11 @@ module BgpTools
       set_bgp_peer_list
     end
 
+    def contains?(ip)
+      ipaddr = IPAddr.new(ip)
+      prefix_list.select {|x| x.ip_addr.include? ipaddr }.count > 0
+    end
+
     private
 
     def set_as_path_length
@@ -28,6 +33,7 @@ module BgpTools
         BGPPeer.new(vals[3], vals[1], ipv6, vals[0].to_i)
       end
     end
+
 
 
     def set_country_of_origin
